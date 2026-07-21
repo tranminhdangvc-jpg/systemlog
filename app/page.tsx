@@ -156,15 +156,83 @@ export default function SystemLogsPage() {
           <div style={{ marginBottom: '4px', fontSize: '12px', color: '#64748b' }}>
             👤 Người mở: <b>{valObj.person || 'Không rõ'}</b>
           </div>
-          <div style={{ fontSize: '11px', color: '#94a3b8' }}>
+          <div style={{ fontSize: '12px', color: '#414141' }}>
             ⏱️ Lúc: {valObj.thoiGian || '---'}
           </div>
         </div>
       );
     }
 
-    // (Sau này bác có thể bổ sung các action khác như thanh_toan, ghi_dich_vu ở đây)
-    
+    // 2. Giao diện cho hành động GHI DỊCH VỤ (Order món)
+    if (log.actions === 'ghi_dich_vu') {
+      // Chuyển object dichVu thành mảng để lặp map hiển thị danh sách món
+      const listDichVu = valObj.dichVu ? Object.values(valObj.dichVu) : [];
+
+      return (
+        <div style={{ background: '#fef3c7', padding: '8px 12px', borderRadius: '6px', border: '1px solid #fde68a' }}>
+          <div style={{ marginBottom: '6px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+            <span>📝 Ghi dịch vụ tại: <b style={{ color: '#b45309' }}>{valObj.tenBan || `Bàn ID: ${valObj.idBan}`}</b></span>
+            <span style={{ fontSize: '11px', color: '#78350f' }}>👤 {valObj.person || '---'}</span>
+          </div>
+
+          {/* Danh sách các món được gọi */}
+          <div style={{ background: '#fff', padding: '6px 8px', borderRadius: '4px', border: '1px solid #fcd34d' }}>
+            {listDichVu.length === 0 ? (
+              <div style={{ fontSize: '12px', color: '#78350f' }}>Không có món nào.</div>
+            ) : (
+              listDichVu.map((item: any, idx: number) => (
+                <div key={idx} style={{ display: 'flex', justifyContent: 'space-between', fontSize: '12px', padding: '3px 0', borderBottom: idx < listDichVu.length - 1 ? '1px dashed #fef3c7' : 'none' }}>
+                  <span>🥤 <b>{item.ten}</b> (SL: {item.sl})</span>
+                  <span style={{ color: '#059669', fontWeight: 'bold' }}>{(item.gia * item.sl).toLocaleString()}đ</span>
+                </div>
+              ))
+            )}
+          </div>
+        </div>
+      );
+    }
+
+    // 3. Giao diện cho hành động THANH TOÁN
+    if (log.actions === 'thanh_toan') {
+      const info = valObj.giaTri || valObj; // Lấy object bên trong giaTri nếu có, hoặc dùng trực tiếp valObj
+
+      return (
+        <div style={{ background: '#f0fdf4', padding: '10px 12px', borderRadius: '6px', border: '1px solid #bbf7d0', maxWidth: '450px' }}>
+          {/* Header Bill */}
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderBottom: '1px solid #dcfce7', paddingBottom: '6px', marginBottom: '6px' }}>
+            <span>💳 Thanh toán: <b style={{ color: '#15803d' }}>{valObj.tenBan || info.tenBan}</b></span>
+            <span style={{ fontSize: '11px', color: '#166534' }}>👤 {valObj.person || '---'}</span>
+          </div>
+
+          {/* Chi tiết thông số bàn & thời gian */}
+          <div style={{ fontSize: '12px', color: '#334155', marginBottom: '8px', display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '4px' }}>
+            <div>⏱️ Bắt đầu: <b>{info.tgBatDau || '---'}</b></div>
+            <div>⏳ Phút chơi: <b>{info.phutDaChoi || 0} phút</b></div>
+            <div>💵 Tiền giờ: <b>{(info.tienGio || 0).toLocaleString()}đ</b></div>
+            <div>🥤 Tiền dịch vụ: <b>{(info.tienDichVu || 0).toLocaleString()}đ</b></div>
+          </div>
+
+          {/* Danh sách dịch vụ trong bill (nếu có) */}
+          {info.danhSachDichVu && info.danhSachDichVu.length > 0 && (
+            <div style={{ background: '#fff', padding: '6px 8px', borderRadius: '4px', border: '1px solid #bbf7d0', marginBottom: '8px', fontSize: '11px' }}>
+              <div style={{ fontWeight: 'bold', color: '#166534', marginBottom: '3px' }}>📋 Món đã dùng:</div>
+              {info.danhSachDichVu.map((dv: any, idx: number) => (
+                <div key={idx} style={{ display: 'flex', justifyContent: 'space-between', color: '#475569', padding: '2px 0' }}>
+                  <span>- {dv.tenDichVu} (x{dv.soLuong})</span>
+                  <span>{(Number(dv.thanhTien) || 0).toLocaleString()}đ</span>
+                </div>
+              ))}
+            </div>
+          )}
+
+          {/* Tổng cộng cuối cùng */}
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', background: '#dcfce7', padding: '6px 8px', borderRadius: '4px', fontWeight: 'bold', color: '#14532d', fontSize: '13px' }}>
+            <span>TỔNG CỘNG:</span>
+            <span style={{ color: '#16a34a', fontSize: '14px' }}>{(info.tongCong || 0).toLocaleString()}đ</span>
+          </div>
+        </div>
+      );
+    }
     // Mặc định cho các action khác: Hiển thị danh sách key-value gọn gàng
     return (
       <div style={{ fontFamily: 'monospace', fontSize: '12px', background: '#f8fafc', padding: '6px', borderRadius: '4px' }}>
