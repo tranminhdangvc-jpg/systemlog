@@ -129,9 +129,50 @@ export default function SystemLogsPage() {
                           {log.actions}
                         </span>
                       </td>
-                      <td style={{ padding: '12px', fontFamily: 'monospace', fontSize: '12px', color: '#334155', maxWidth: '400px', wordBreak: 'break-all' }}>
-                        {log.values ? JSON.stringify(log.values, null, 2) : '---'}
-                      </td>
+<td style={{ padding: '12px', fontSize: '13px', color: '#334155', maxWidth: '450px' }}>
+  {(() => {
+    // Ép kiểu hoặc parse an toàn dữ liệu values nếu nó đang ở dạng chuỗi JSON
+    let valObj = log.values;
+    if (typeof valObj === 'string') {
+      try {
+        valObj = JSON.parse(valObj);
+      } catch (e) {
+        valObj = null;
+      }
+    }
+
+    // Nếu không có data hoặc không phải object thì hiện thô
+    if (!valObj || typeof valObj !== 'object') {
+      return <span>{String(log.values || '---')}</span>;
+    }
+
+    // GIAO DIỆN RIÊNG CHO TỪNG LOẠI HÀNH ĐỘNG (ACTIONS)
+    if (log.actions === 'mo_ban' || log.actions === 'open-table') {
+      return (
+        <div style={{ background: '#f8fafc', padding: '8px 12px', borderRadius: '6px', border: '1px solid #e2e8f0' }}>
+          <div style={{ marginBottom: '4px' }}>
+            🏓 Bàn: <b style={{ color: '#0f172a' }}>{valObj.tenBan || `ID: ${valObj.idBan}`}</b>
+          </div>
+          <div style={{ marginBottom: '4px', fontSize: '12px', color: '#64748b' }}>
+            👤 Người mở: <b>{valObj.person || 'Không rõ'}</b>
+          </div>
+          <div style={{ fontSize: '11px', color: '#94a3b8' }}>
+            ⏱️ Lúc: {valObj.thoiGian || '---'}
+          </div>
+        </div>
+      );
+    }
+
+    // (Sau này bác có thể bổ sung các action khác như thanh_toan, ghi_dich_vu ở đây)
+    
+    // Mặc định cho các action khác: Hiển thị danh sách key-value gọn gàng
+    return (
+      <div style={{ fontFamily: 'monospace', fontSize: '12px', background: '#f8fafc', padding: '6px', borderRadius: '4px' }}>
+        {JSON.stringify(valObj, null, 2)}
+      </div>
+    );
+  })()}
+</td>
                       <td style={{ padding: '12px', color: '#64748b', fontSize: '13px', whiteSpace: 'nowrap' }}>
                         {log.created_at}
                       </td>
