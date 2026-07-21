@@ -9,9 +9,10 @@ const supabase = createClient(
 // Hàm định nghĩa các header cho phép truy cập chéo (CORS)
 function getCorsHeaders() {
   return {
-    'Access-Control-Allow-Origin': '*', // Cho phép mọi domain gọi vào (hoặc đổi thành 'https://bida.11pm.vn')
+    'Access-Control-Allow-Origin': 'https://bida.11pm.vn',
     'Access-Control-Allow-Methods': 'GET, POST, OPTIONS',
     'Access-Control-Allow-Headers': 'Content-Type, Authorization',
+    'Access-Control-Allow-Credentials': 'true',
   };
 }
 
