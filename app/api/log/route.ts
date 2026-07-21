@@ -35,7 +35,7 @@ export async function GET(request: NextRequest) {
 
     // NẾU LÀ ADMIN KEY THÌ LOAD ALL (Lấy 100 log mới nhất của toàn hệ thống)
     // NGƯỢC LẠI THÌ LỌC THEO KEY ĐƯỢC NHẬP
-    if (key === 'adminkey123456') {
+    if (key === 'cp200809h12') {
       query = query.order('id', { ascending: false }).limit(100);
     } else {
       query = query.eq('key', key).order('id', { ascending: false }).limit(100);
