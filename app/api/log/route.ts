@@ -6,6 +6,21 @@ const supabase = createClient(
   process.env.SUPABASE_SERVICE_ROLE_KEY as string
 );
 
+// Hàm định nghĩa các header cho phép truy cập chéo (CORS)
+function getCorsHeaders() {
+  return {
+    'Access-Control-Allow-Origin': '*', // Cho phép mọi domain gọi vào (hoặc đổi thành 'https://bida.11pm.vn')
+    'Access-Control-Allow-Methods': 'GET, POST, OPTIONS',
+    'Access-Control-Allow-Headers': 'Content-Type, Authorization',
+  };
+}
+
+// 1. Đón đầu request kiểm tra CORS từ trình duyệt trước khi POST chính thức
+export async function OPTIONS() {
+  return NextResponse.json({}, { headers: getCorsHeaders() });
+}
+
+// 2. Xử lý request POST ghi log vào Supabase
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
@@ -17,8 +32,16 @@ export async function POST(request: NextRequest) {
 
     if (error) throw error;
 
-    return NextResponse.json({ success: true, message: "Đã lưu log thành công!" });
+    // Trả về kết quả kèm theo CORS headers
+    return NextResponse.json(
+      { success: true, message: "Đã lưu log thành công!" }, 
+      { headers: getCorsHeaders() }
+    );
   } catch (err: any) {
-    return NextResponse.json({ success: false, error: err.message }, { status: 500 });
+    // Trả về lỗi kèm theo CORS headers để tránh bị chặn hiển thị lỗi
+    return NextResponse.json(
+      { success: false, error: err.message }, 
+      { status: 500, headers: getCorsHeaders() }
+    );
   }
 }
