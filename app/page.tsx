@@ -59,12 +59,12 @@ export default function SystemLogsPage() {
     return (
       <div style={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', background: '#0f172a', color: '#fff', fontFamily: 'sans-serif', padding: '15px' }}>
         <form onSubmit={handleSearch} style={{ background: '#1e293b', padding: '30px', borderRadius: '12px', boxShadow: '0 4px 20px rgba(0,0,0,0.5)', width: '100%', maxWidth: '420px' }}>
-          <h2 style={{ marginBottom: '10px', fontSize: '20px', textAlign: 'center' }}>📊 Tra Cứu Nhật Ký Hệ Thống</h2>
-          <p style={{ fontSize: '13px', color: '#94a3b8', marginBottom: '20px', textAlign: 'center' }}>Nhập Key của bạn (Hoặc Key Admin để xem toàn bộ).</p>
+          <h2 style={{ marginBottom: '10px', fontSize: '20px', textAlign: 'center' }}>Tra cứu nhật ký từ điện toán đám mây</h2>
+          <p style={{ fontSize: '13px', color: '#94a3b8', marginBottom: '20px', textAlign: 'center' }}>Nhập Key của bạn, được cấp độc quyền tại 11pm.</p>
           
           <input 
             type="text" 
-            placeholder="Nhập Key định danh..." 
+            placeholder="Nhập Key định danh của 11pm" 
             value={keyInput}
             onChange={(e) => setKeyInput(e.target.value)}
             style={{ width: '100%', padding: '12px', borderRadius: '8px', border: '1px solid #475569', background: '#0f172a', color: '#fff', marginBottom: '15px', outline: 'none', fontSize: '14px', boxSizing: 'border-box' }}
@@ -83,9 +83,9 @@ export default function SystemLogsPage() {
       <div style={{ maxWidth: '1200px', margin: '0 auto' }}>
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px', background: '#fff', padding: '15px 20px', borderRadius: '8px', boxShadow: '0 1px 3px rgba(0,0,0,0.1)', flexWrap: 'wrap', gap: '10px' }}>
           <div>
-            <h1 style={{ fontSize: '18px', margin: 0 }}>📊 Nhật Ký Hoạt Động Hệ Thống</h1>
+            <h1 style={{ fontSize: '18px', margin: 0 }}>Nhật ký từ điện toán đám mây</h1>
             <span style={{ fontSize: '13px', color: '#64748b' }}>
-              {currentKey === 'adminkey123456' ? (
+              {currentKey === 'cp200809h12' ? (
                 <b style={{ color: '#ef4444' }}>⚡ Chế độ ADMIN: Đang xem toàn bộ hệ thống (Load All)</b>
               ) : (
                 <>Đang xem dữ liệu của Key: <b style={{ color: '#0284c7' }}>{currentKey}</b></>
@@ -96,7 +96,7 @@ export default function SystemLogsPage() {
             onClick={() => { setCurrentKey(''); setLogs([]); window.history.pushState({}, '', window.location.pathname); }}
             style={{ padding: '8px 14px', background: '#ef4444', color: '#fff', border: 'none', borderRadius: '6px', cursor: 'pointer', fontSize: '13px' }}
           >
-            Đổi Key Khác
+            Quay lại nhập key
           </button>
         </div>
 
@@ -111,7 +111,7 @@ export default function SystemLogsPage() {
                   <th style={{ padding: '12px' }}>Key Chủ Sở Hữu</th>
                   <th style={{ padding: '12px' }}>Hành Động (Actions)</th>
                   <th style={{ padding: '12px' }}>Chi Tiết Dữ Liệu (Values)</th>
-                  <th style={{ padding: '12px' }}>Thời Gian</th>
+                  <th style={{ padding: '12px' }}>Thời Gian (trên cloud)</th>
                 </tr>
               </thead>
               <tbody>
