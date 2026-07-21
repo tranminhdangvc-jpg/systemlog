@@ -21,6 +21,37 @@ export async function OPTIONS() {
   return NextResponse.json({}, { headers: getCorsHeaders() });
 }
 
+// Bổ sung hàm GET để phục vụ trang page.tsx đọc log an toàn
+export async function GET(request: NextRequest) {
+  try {
+    const { searchParams } = new URL(request.url);
+    const key = searchParams.get('key');
+
+    if (!key) {
+      return NextResponse.json({ success: false, message: "Thiếu Key tra cứu!" }, { status: 400, headers: getCorsHeaders() });
+    }
+
+    let query = supabase.from('system_logs').select('*');
+
+    // NẾU LÀ ADMIN KEY THÌ LOAD ALL (Lấy 100 log mới nhất của toàn hệ thống)
+    // NGƯỢC LẠI THÌ LỌC THEO KEY ĐƯỢC NHẬP
+    if (key === 'adminkey123456') {
+      query = query.order('id', { ascending: false }).limit(100);
+    } else {
+      query = query.eq('key', key).order('id', { ascending: false }).limit(100);
+    }
+
+    const { data, error } = await query;
+
+    if (error) throw error;
+
+    return NextResponse.json({ success: true, data }, { headers: getCorsHeaders() });
+  } catch (err: any) {
+    return NextResponse.json({ success: false, error: err.message }, { status: 500, headers: getCorsHeaders() });
+  }
+}
+
+
 // 2. Xử lý request POST ghi log vào Supabase
 export async function POST(request: NextRequest) {
   try {
